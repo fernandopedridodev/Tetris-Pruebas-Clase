@@ -1,0 +1,41 @@
+Cadrados [] cadrados = new Cadrados [4];
+
+cadrados [0] = new a;
+cadrados [1] = new b;
+cadrados [2] = new c;
+cadrados [3] = new d;
+
+----------------------
+Aquí abajo el correcto
+----------------------
+
+
+public class Piece{
+    private Square [] squares;
+
+    public Piece (int x , int y){
+        squares = new Square[4];
+        for(int i = 0; i < 4; i++){
+            squares[i] = new Square(x, y + i);
+}
+}
+    public Square[] getSquares() {
+        return squares;
+}
+    public void moveRight() {
+        for(Square square : squares){
+        square.setX(square.getX() + 1);
+}
+}
+    public void moveLeft() {
+        for(Square square : squares){
+        square.setX(square.getX() - 1);
+}
+}
+
+    public void moveDown() {
+        for(Square square : squares){
+        square.setY(square.getY() + 1);
+}
+}
+}
