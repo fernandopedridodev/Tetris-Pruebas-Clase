@@ -16,21 +16,24 @@
  */
 package teistris;
 import javax.swing.*;
+
 import java.awt.*;
+
 import java.awt.event.ActionEvent;
+
 import java.awt.event.ActionListener;
-/**
- * Clase que implementa o comportamento do xogo do Tetris
- * @author Profe de Programación
- */
+
+import java.util.ArrayList;
+
+
 public class Game {
 
 
     public final static int SQUARE_SIDE = 20;
 
-    public final static int MAX_X = 160;
+    public final static int MAX_X = 160; // Ancho del panel
 
-    public final static int MAX_Y = 220;
+    public final static int MAX_Y = 180; // Alto del panel
 
     private Piece currentPiece;
 
@@ -38,10 +41,14 @@ public class Game {
 
     private Timer timer;
 
+    private ArrayList<Square> groundSquares; // Para almacenar los cuadrados que forman el suelo
+
 
     public Game(MainWindow mainWindow) {
 
         this.mainWindow = mainWindow;
+
+        this.groundSquares = new ArrayList<>(); // Inicializa la lista del suelo
 
         this.createNewPiece();
 
@@ -52,28 +59,28 @@ public class Game {
 
     private void startGameLoop() {
 
-        timer = new Timer(300, new ActionListener() { // Cambia 500 a 300 para mayor velocidad
+        timer = new Timer(500, new ActionListener() { // Intervalo de 500 ms
 
-        @Override
+            @Override
 
-        public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(ActionEvent e) {
 
-            movePieceDown();
+                movePieceDown();
 
-        }
+            }
 
-    });
+        });
 
-    timer.start();
+        timer.start();
 
-}
+    }
 
 
     public void movePieceRight() {
 
-        if (currentPiece.canMoveTo(currentPiece.getX() + 1, currentPiece.getY())) {
+        if (currentPiece.canMoveTo(currentPiece.getX() + 20, currentPiece.getY())) {
 
-            currentPiece.moveBy(1, 0);
+            currentPiece.moveBy(20, 0);
 
         }
 
@@ -82,44 +89,26 @@ public class Game {
 
     public void movePieceLeft() {
 
-        if (currentPiece.canMoveTo(currentPiece.getX() - 1, currentPiece.getY())) {
+        if (currentPiece.canMoveTo(currentPiece.getX() - 20, currentPiece.getY())) {
 
-            currentPiece.moveBy(-1, 0);
+            currentPiece.moveBy(-20, 0);
 
         }
 
     }
-private int linesCleared = 0;
 
 
-void movePieceDown() {
+    public void movePieceDown() {
 
-    if (!currentPiece.moveDown()) {
+        if (!currentPiece.moveDown()) {
 
-        addPieceToGround();
+            addPieceToGround();
 
-        createNewPiece();
+            createNewPiece();
 
-        linesCleared++;
-
-        adjustSpeed();
+        }
 
     }
-
-}
-
-
-private void adjustSpeed() {
-
-    if (linesCleared % 5 == 0) { // Cada 5 líneas, aumenta la velocidad
-
-        int newDelay = Math.max(100, timer.getDelay() - 50); // Reduce el delay, pero no menos de 100 ms
-
-        timer.setDelay(newDelay);
-
-    }
-
-}
 
 
     private void createNewPiece() {
@@ -131,12 +120,28 @@ private void adjustSpeed() {
 
     private void addPieceToGround() {
 
-        currentPiece.addPieceToGround();
+        for (Square square : currentPiece.getSquares()) {
+
+            groundSquares.add(square); // Agrega cada cuadrado al suelo
+
+        }
 
     }
 
 
     public boolean isValidPosition(int x, int y) {
+
+        // Verifica si la posición está dentro de los límites y no está ocupada
+
+        for (Square square : groundSquares) {
+
+            if (square.getX() == x && square.getY() == y) {
+
+                return false; // La posición está ocupada
+
+            }
+
+        }
 
         return x >= 0 && x < MAX_X && y >= 0 && y < MAX_Y;
 

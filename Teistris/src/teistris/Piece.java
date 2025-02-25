@@ -17,33 +17,55 @@
 package teistris;
 
 import java.awt.*;
+import java.util.HashSet;
+import java.util.Set;
 
-/**
- * Clase que implementa a peza cadrada do xogo do Tetris
- *
- * @author Profe de Programación
- */
+
 public class Piece {
 
 
     private Game game;
 
     private Square[] squares;
-
+     private Set<Point> occupiedPositions; // Para almacenar posiciones ocupadas
 
     public Piece(Game game, int x, int y) {
 
         this.game = game;
 
         squares = new Square[4];
+        this.occupiedPositions = new HashSet<>(); // Inicializa el conjunto de posiciones ocupadas
 
-        // Configuración de la pieza en forma de línea
+         // Configuración de la pieza en forma de cuadrado 2x2
 
-        for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < 2; i++) { // Dos filas
 
-            squares[i] = new Square(x + i, y, Color.BLUE, game); // Cuadrados en línea horizontal
+            for (int j = 0; j < 2; j++) { // Dos columnas
 
+                int newX = x + j * Game.SQUARE_SIDE;
+
+                int newY = y + i * Game.SQUARE_SIDE;
+
+                Point position = new Point(newX, newY); // Crea un objeto Point para la posición
+
+
+                // Verifica si la posición ya está ocupada
+
+                if (!occupiedPositions.contains(position)) {
+
+                    squares[i * 2 + j] = new Square(newX, newY, Color.BLUE, game);
+
+                    occupiedPositions.add(position); // Marca la posición como ocupada
+
+                }
         }
+
+    }
+
+    }
+    public Square[] getSquares() {
+
+        return squares; // Devuelve los cuadrados de la pieza
 
     }
 
@@ -75,9 +97,9 @@ public class Piece {
 
     public boolean moveDown() {
 
-        if (canMoveTo(getX(), getY() + 1)) {
+        if (canMoveTo(getX(), getY() + Game.SQUARE_SIDE)) {
 
-            moveBy(0, 1);
+            moveBy(0, Game.SQUARE_SIDE);
 
             return true;
 
@@ -101,15 +123,6 @@ public class Piece {
         }
 
         return true;
-
-    }
-
-
-    public void addPieceToGround() {
-
-        for (Square square : squares) {
-
-        }
 
     }
 

@@ -16,12 +16,12 @@
  */
 package teistris;
 
-import java.awt.*;
-import javax.swing.JLabel;
-import javax.swing.BorderFactory;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
+import javax.swing.*;
+
 import javax.swing.border.BevelBorder;
+
+import java.awt.*;
+
 
 public class Square {
 
@@ -87,4 +87,3 @@ public class Square {
     }
 
 }
-
