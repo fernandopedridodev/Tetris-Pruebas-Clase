@@ -18,53 +18,10 @@ public class InitMenuView {
 
     public InitMenuView(InitMenuController initMenuController) {
 
-        this.initMenuController = initMenuController;
-
-    }
-    public void login(String username, String password) {
-
-        Profile profile = ProfileDB.findByNameAndPassword(username, password);
-
-        if (profile != null) {
-
-            System.out.println("Inicio de sesión exitoso. Benvido, " + profile.getName() + "!");
-
-            // Aquí puedes redirigir al usuario a su perfil o al menú principal
-
-        } else {
-
-            System.out.println("Usuario ou contrasinal incorrectos.");
-
-            // Aquí puedes invocar el método para mostrar el mensaje de error en la vista
-
-        }
+        this.initMenuController = initMenuController; // Inicializa el controlador
 
     }
 
-
-    public void createProfile(String name, String password, String status) {
-
-        Profile existingProfile = ProfileDB.findByName(name);
-
-        if (existingProfile == null) {
-
-            Profile newProfile = new Profile(name, password);
-
-            newProfile.setStatus(status); // Asumiendo que hay un método setStatus en Profile
-
-            ProfileDB.save(newProfile);
-
-            System.out.println("Perfil creado exitosamente.");
-
-        } else {
-
-            System.out.println("O nome de usuario xa está en uso. Tente de novo.");
-
-            // Aquí puedes invocar el método para solicitar un nuevo nombre en la vista
-
-        }
-
-    }
 
     public boolean showLoginMenu() {
 
@@ -175,7 +132,8 @@ public class InitMenuView {
 
     }
 
-    private static class InitMenuController {
+}
+    class InitMenuController {
 
         public InitMenuController() {
         }
@@ -189,4 +147,3 @@ public class InitMenuView {
         }
     }
 
-}
