@@ -12,40 +12,34 @@ import java.util.List;
  * @author fernando.pedridomarino
  */
 public class Post {
-    private String contido;
-    private Date creacionDate;
-    private List<Comment> comentarios;
-    
-    public Post(String contido){
-        this.contido = contido;
-        this.creacionDate = new Date();
-        this.comentarios = new ArrayList<>();
+
+    private String content;
+
+    private String author;
+
+
+    public Post(String content, String author) {
+
+        this.content = content;
+
+        this.author = author;
+
     }
 
-    public String getContido() {
-        return contido;
+
+    // Getters
+
+    public String getContent() {
+
+        return content;
+
     }
 
-    public void setContido(String contido) {
-        this.contido = contido;
+
+    public String getAuthor() {
+
+        return author;
+
     }
 
-    public Date getCreacionDate() {
-        return creacionDate;
-    }
-
-    public void setCreacionDate(Date creacionDate) {
-        this.creacionDate = creacionDate;
-    }
-
-    public List<Comment> getComentario() {
-        return comentarios;
-    }
-
-    public void setComentario(List<Comment> comentario) {
-        this.comentarios = comentario;
-    }
-      public void addComment(Comment comentario){
-          comentarios.add(comentario);
-      }     
 }
