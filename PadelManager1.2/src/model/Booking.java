@@ -10,18 +10,25 @@ import java.util.Date;
  *
  * @author fernando.pedridomarino
  */
-abstract class Booking {
-
+public abstract class Booking {
     protected Date date;
     protected String hour;
     protected PadelCourt court;
 
+    /**
+     * Construtor da clase Booking.
+     * 
+     * @param date  Data da reserva.
+     * @param hour  Hora da reserva en formato "hh:mm".
+     * @param court Pista reservada.
+     */
     public Booking(Date date, String hour, PadelCourt court) {
         this.date = date;
         this.hour = hour;
         this.court = court;
     }
 
+    // Métodos de acceso (getters)
     public Date getDate() {
         return date;
     }
@@ -32,22 +39,22 @@ abstract class Booking {
 
     public PadelCourt getCourt() {
         return court;
-    }
-
-    /**
-     * Definimos os metodos abstractos getPrice, isCompleted, containsPlayer,
-     * getDescription e addPlayer
-     */
-    public abstract double getPrice();
-
+  
+}
+   public abstract double getPrice();
     public abstract boolean isCompleted();
-
-    public abstract boolean containsPlayer(String id);
-           
-    abstract void getDescription();
-
-    abstract void addPlayer();
+    public abstract boolean containsPlayer(String playerId);
 
 }
 
-
+/**
+     * Obtén unha descrición da reserva.
+     * 
+     * @return String cos datos da reserva
+     * 
+    // Métodos abstractos
+    */
+     
+   
+    
+    

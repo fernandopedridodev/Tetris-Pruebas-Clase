@@ -12,13 +12,21 @@ import java.util.logging.Logger;
  * Implementamos a clase player que manexará os datos do usuario na aplicación
  */
 public class Player {
+    private String id;
+    private String password;
+    private String name;
+    private double score;
+    private double balance;
 
-    protected String id;
-    protected String password;
-    protected String name;
-    protected double score;
-    protected double balance;
-
+    /**
+     * Construtor da clase Player.
+     * 
+     * @param id       Identificador único do xogador.
+     * @param password Contrasinal do xogador.
+     * @param name     Nome do xogador.
+     * @param score    Puntuación ou nivel do xogador.
+     * @param balance  Saldo de cartos dispoñible do xogador.
+     */
     public Player(String id, String password, String name, double score, double balance) {
         this.id = id;
         this.password = password;
@@ -27,6 +35,7 @@ public class Player {
         this.balance = balance;
     }
 
+    // Métodos de acceso (getters e setters)
     public String getId() {
         return id;
     }
@@ -66,5 +75,4 @@ public class Player {
     public void setBalance(double balance) {
         this.balance = balance;
     }
-
 }

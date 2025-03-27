@@ -11,38 +11,48 @@ package model;
  * dispoñibles.
  */
 public class PadelCourt {
-
     public static final int SINGLE = 1;
     public static final int DOUBLE = 2;
+
     protected int number;
     protected int type;
-    /**
-     * Array de string para reservar as pistas
-     */
-    protected String[] bookingHours = {"9:00", "11:30", "13:00"};
+    protected String[] bookingHours;
 
-    public PadelCourt(int number, int type) {
+    /**
+     * Construtor da clase PadelCourt.
+     * 
+     * @param number       Número identificador da pista.
+     * @param type         Tipo de pista (SINGLE ou DOUBLE).
+     * @param bookingHours Array coas horas dispoñibles para reservas.
+     */
+    public PadelCourt(int number, int type, String[] bookingHours) {
         this.number = number;
         this.type = type;
+        this.bookingHours = bookingHours;
     }
 
-    public static int getSINGLE() {
-        return SINGLE;
-    }
-
-    public static int getDOUBLE() {
-        return DOUBLE;
-    }
-
+    // Métodos de acceso (getters e setters)
     public int getNumber() {
         return number;
+    }
+
+    public void setNumber(int number) {
+        this.number = number;
     }
 
     public int getType() {
         return type;
     }
 
+    public void setType(int type) {
+        this.type = type;
+    }
+
     public String[] getBookingHours() {
         return bookingHours;
+    }
+
+    public void setBookingHours(String[] bookingHours) {
+        this.bookingHours = bookingHours;
     }
 }

@@ -4,10 +4,21 @@
  */
 package controller;
 
+import view.SessionView;
+import model.Player;
 /**
  *
  * @author fernando.pedridomarino
  */
 public class SessionController {
+    private SessionView view;
+    private sessionPlayer Player;
+
+    public SessionController(sessionPlayer Player) {
+        this.Player = Player;
+    }
+    public void loadSession(){
+        
+    }
     
 }

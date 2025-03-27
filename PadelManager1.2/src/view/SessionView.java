@@ -2,19 +2,14 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package db;
+package view;
 
-import java.util.ArrayList;
-import model.Booking;
+import controller.SessionController;
 
 /**
  *
  * @author fernando.pedridomarino
  */
-public class BookingDB {
-    public static ArrayList<Booking>findByDate(){
-        
-        return null;
-        
-    }
+public class SessionView {
+    private SessionController controller;
 }
