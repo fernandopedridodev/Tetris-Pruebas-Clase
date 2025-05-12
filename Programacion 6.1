@@ -1,0 +1,338 @@
+6.1.1
+
+package peliculas;
+
+/**
+ *
+ * @author fernando.pedridomarino
+ */
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+
+public class PeliculasBD {
+    // URL da base de datos
+    private static final String URL = "jdbc:mariadb://localhost:33006/peliculas";
+    // Usuario e contrasinal da base de datos
+    private static final String USER = "admin"; // Cambia por o teu usuario
+    private static final String PASSWORD = "daw2pass"; // Cambia por a túa contrasinal
+
+    public static void main(String[] args) {
+        Connection connection = null;
+
+        try {
+            // Establecer a conexión
+            connection = DriverManager.getConnection(URL, USER, PASSWORD);
+            System.out.println("Conexión co servidor creada con éxito");
+        } catch (SQLException e) {
+            System.out.println("A conexión co servidor de bases de datos non se puido establecer");
+            e.printStackTrace(); // Opcional: imprime a traza do erro
+        } finally {
+            // Pechar a conexión se foi creada
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    e.printStackTrace(); // Opcional: imprime o erro
+                }
+            }
+        }
+    }
+}
+
+
+6.1.2
+
+package peliculas;
+
+/**
+ *
+ * @author fernando.pedridomarino
+ */
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.util.Scanner;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+
+public class PeliculasBD {
+    private static final String URL = "jdbc:mariadb://localhost:33006/peliculas";
+    private static final String USER = "admin";
+    private static final String PASSWORD = "daw2pass";
+
+    public static void main(String[] args) {
+        try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
+             Scanner sc = new Scanner(System.in)) {
+
+            int opcion;
+            do {
+                System.out.println("\n1. Insertar película");
+                System.out.println("2. Mostrar películas");
+                System.out.println("3. Buscar película");
+                System.out.println("4. Saír");
+                System.out.print("Opción: ");
+                opcion = sc.nextInt();
+                sc.nextLine(); // limpar buffer
+
+                if (opcion == 1) {
+                    System.out.print("Título: ");
+                    String titulo = sc.nextLine();
+                    System.out.print("Ano: ");
+                    int ano = sc.nextInt();
+                    sc.nextLine(); // limpar buffer
+
+                    String sql = "INSERT INTO films (title, year) VALUES (?, ?)";
+                    try (PreparedStatement ps = conn.prepareStatement(sql)) {
+                        ps.setString(1, titulo);
+                        ps.setInt(2, ano);
+                        ps.executeUpdate();
+                        System.out.println("Película insertada.");
+                    }
+
+                } else if (opcion == 2) {
+                    String sql = "SELECT * FROM films";
+                    try (PreparedStatement ps = conn.prepareStatement(sql);
+                         ResultSet rs = ps.executeQuery()) {
+                        while (rs.next()) {
+                            System.out.println(rs.getInt("id") + " - " +
+                                               rs.getString("title") + " (" +
+                                               rs.getInt("year") + ")");
+                        }
+                    }
+
+                } else if (opcion == 3) {
+                    System.out.print("ID da película: ");
+                    int id = sc.nextInt();
+                    sc.nextLine(); // limpar buffer
+
+                    String sql = "SELECT * FROM films WHERE id = ?";
+                    try (PreparedStatement ps = conn.prepareStatement(sql)) {
+                        ps.setInt(1, id);
+                        try (ResultSet rs = ps.executeQuery()) {
+                            if (rs.next()) {
+                                System.out.println(rs.getInt("id") + " - " +
+                                                   rs.getString("title") + " (" +
+                                                   rs.getInt("year") + ")");
+                            } else {
+                                System.out.println("Non se atopou a película.");
+                            }
+                        }
+                    }
+                } else if (opcion == 4) {
+                    System.out.println("Adeus!");
+                } else {
+                    System.out.println("Opción incorrecta.");
+                }
+            } while (opcion != 4);
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+
+6.1.3
+
+package peliculas;
+
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.Scanner;
+/**
+ *
+ * @author fernando.pedridomarino
+ */
+public class PeliculasBDSQLite {
+    private static final String URL = "jdbc:sqlite:peliculas.db"; // Ruta da base de datos SQLite
+
+    public static void main(String[] args) {
+        try (Connection connection = DriverManager.getConnection(URL);
+             Scanner scanner = new Scanner(System.in)) {
+
+            // Crear a táboa se non existe
+            crearTablaFilms(connection);
+
+            int opcion;
+            do {
+                System.out.println("\n--- Menú ---");
+                System.out.println("1. Insertar unha nova película");
+                System.out.println("2. Mostrar todas as películas");
+                System.out.println("3. Buscar unha película por ID");
+                System.out.println("4. Pechar a aplicación");
+                System.out.print("Escolle unha opción: ");
+                opcion = scanner.nextInt();
+                scanner.nextLine(); // limpar buffer
+
+                // Usamos o switch clásico sen "switch expressions"
+                switch (opcion) {
+                    case 1:
+                        insertarPelicula(connection, scanner);
+                        break;
+                    case 2:
+                        mostrarPeliculas(connection);
+                        break;
+                    case 3:
+                        buscarPelicula(connection, scanner);
+                        break;
+                    case 4:
+                        System.out.println("Pechando a aplicación...");
+                        break;
+                    default:
+                        System.out.println("Opción non válida.");
+                        break;
+                }
+            } while (opcion != 4);
+
+        } catch (SQLException e) {
+            System.out.println("Erro coa base de datos: " + e.getMessage());
+        }
+    }
+
+    // Crear a táboa de películas se non existe
+    private static void crearTablaFilms(Connection conn) throws SQLException {
+        String sql = "CREATE TABLE IF NOT EXISTS films (" +
+                     "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                     "title TEXT NOT NULL," +
+                     "year INTEGER NOT NULL" +
+                     ");";
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.executeUpdate();
+        }
+    }
+
+    // Insertar unha nova película na base de datos
+    private static void insertarPelicula(Connection conn, Scanner sc) throws SQLException {
+        System.out.print("Título da película: ");
+        String title = sc.nextLine();
+        System.out.print("Ano da película: ");
+        int year = sc.nextInt();
+        sc.nextLine(); // limpar buffer
+
+        String sql = "INSERT INTO films (title, year) VALUES (?, ?)";
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, title); // Establecer o título
+            pstmt.setInt(2, year);     // Establecer o ano
+            pstmt.executeUpdate();     // Executar a consulta de inserción
+            System.out.println("Película insertada correctamente.");
+        }
+    }
+
+    // Mostrar todas as películas na base de datos
+    private static void mostrarPeliculas(Connection conn) throws SQLException {
+        String sql = "SELECT * FROM films";
+        try (PreparedStatement pstmt = conn.prepareStatement(sql);
+             ResultSet rs = pstmt.executeQuery()) {
+
+            System.out.println("\n--- Listaxe de películas ---");
+            while (rs.next()) {
+                int id = rs.getInt("id");
+                String title = rs.getString("title");
+                int year = rs.getInt("year");
+                System.out.printf("ID: %d | Título: %s | Ano: %d%n", id, title, year);
+            }
+        }
+    }
+
+    // Buscar unha película por ID
+    private static void buscarPelicula(Connection conn, Scanner sc) throws SQLException {
+        System.out.print("Introduce o ID da película: ");
+        int id = sc.nextInt();
+        sc.nextLine(); // limpar buffer
+
+        String sql = "SELECT * FROM films WHERE id = ?";
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, id); // Establecer o ID para buscar
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    String title = rs.getString("title");
+                    int year = rs.getInt("year");
+                    System.out.printf("ID: %d | Título: %s | Ano: %d%n", id, title, year);
+                } else {
+                    System.out.println("Película non atopada con ese ID.");
+                }
+            }
+        }
+    }
+}
+
+
+
+6.1.4
+
+
+public class PeliculasApp {
+
+    private static final String DB_URL = "jdbc:sqlite:peliculas.db"; // Ruta de la base de datos
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            JFrame frame = new JFrame("Gestión de Películas");
+            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            frame.setSize(400, 300);
+            frame.setLayout(new FlowLayout());
+
+            // ComboBox para los títulos de las películas
+            JComboBox<String> comboBox = new JComboBox<>();
+            loadPeliculas(comboBox);
+
+            // Botón de Borrar
+            JButton deleteButton = new JButton("Borrar");
+            deleteButton.addActionListener(e -> borrarPelicula(comboBox));
+
+            // Añadir componentes al frame
+            frame.add(comboBox);
+            frame.add(deleteButton);
+            frame.setVisible(true);
+        });
+    }
+
+    // Cargar los títulos de las películas en el ComboBox
+    private static void loadPeliculas(JComboBox<String> comboBox) {
+        try (Connection conn = DriverManager.getConnection(DB_URL)) {
+            String sql = "SELECT title FROM films";
+            try (PreparedStatement pstmt = conn.prepareStatement(sql);
+                 ResultSet rs = pstmt.executeQuery()) {
+
+                while (rs.next()) {
+                    comboBox.addItem(rs.getString("title"));
+                }
+            }
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "Error al cargar las películas.");
+            e.printStackTrace();
+        }
+    }
+
+    // Borrar la película seleccionada en el ComboBox
+    private static void borrarPelicula(JComboBox<String> comboBox) {
+        String selectedTitle = (String) comboBox.getSelectedItem();
+        if (selectedTitle == null) {
+            JOptionPane.showMessageDialog(null, "No has seleccionado ninguna película.");
+            return;
+        }
+
+        try (Connection conn = DriverManager.getConnection(DB_URL)) {
+            String sql = "DELETE FROM films WHERE title = ?";
+            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                pstmt.setString(1, selectedTitle);
+                int rowsAffected = pstmt.executeUpdate();
+                if (rowsAffected > 0) {
+                    JOptionPane.showMessageDialog(null, "Película borrada correctamente.");
+                    comboBox.removeItem(selectedTitle); // Eliminar del ComboBox
+                } else {
+                    JOptionPane.showMessageDialog(null, "No se pudo borrar la película.");
+                }
+            }
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "Error al borrar la película.");
+            e.printStackTrace();
+        }
+    }
+}
